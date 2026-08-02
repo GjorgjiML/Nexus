@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Create post')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card panel-card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-3">Create a post</h1>
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}">Error</div>
+
+                    <form th:action="@{/post/create}" th:object="${postForm}" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label" for="content">Content</label>
+                            <textarea id="content" class="form-control" th:field="*{content}" maxlength="2000" rows="5"
+                                      placeholder="What's on your mind?" required></textarea>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="image">Image (optional)</label>
+                            <input id="image" type="file" class="form-control" name="image" accept="image/*" data-preview>
+                            <img id="imagePreview" class="img-fluid rounded mt-2 d-none" alt="Preview">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Publish</button>
+                            <a class="btn btn-outline-secondary" th:href="@{/}">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

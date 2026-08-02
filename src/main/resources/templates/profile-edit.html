@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Edit profile')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card panel-card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-3">Edit profile</h1>
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}">Error</div>
+
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div th:replace="~{fragments/layout :: avatar(${profile.avatarPath}, ${profile.username}, 'avatar-lg')}"></div>
+                        <div>
+                            <div class="fw-semibold" th:text="${profile.username}">username</div>
+                            <div class="text-secondary small">Update your bio and avatar</div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/profile/edit}" th:object="${profileForm}" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label" for="bio">Bio</label>
+                            <textarea id="bio" class="form-control" th:field="*{bio}" maxlength="500" rows="4"
+                                      placeholder="Tell people a bit about yourself"></textarea>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('bio')}" th:errors="*{bio}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="avatar">Avatar</label>
+                            <input id="avatar" type="file" class="form-control" name="avatar" accept="image/*" data-preview>
+                            <img id="imagePreview" class="img-fluid rounded mt-2 d-none" alt="Preview" style="max-height: 220px;">
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <a class="btn btn-outline-secondary" th:href="@{/profile/{u}(u=${profile.username})}">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

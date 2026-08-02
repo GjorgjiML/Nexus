@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: nexus-db
+    environment:
+      POSTGRES_DB: nexus
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: nexus
+    ports:
+      - "5432:5432"
+    volumes:
+      - nexus-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus -d nexus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: nexus-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/nexus
+      SPRING_DATASOURCE_USERNAME: nexus
+      SPRING_DATASOURCE_PASSWORD: nexus
+      JWT_SECRET: NexusDevSecretKeyThatIsAtLeast256BitsLongForHS256Algorithm!!
+      UPLOAD_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - nexus-uploads:/app/uploads
+    restart: unless-stopped
+
+volumes:
+  nexus-db-data:
+  nexus-uploads:

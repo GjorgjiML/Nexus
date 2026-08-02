@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container auth-wrapper py-4">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-6 col-lg-5">
+            <div class="card auth-card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-1">Welcome back</h1>
+                    <p class="text-secondary mb-4">Sign in to your Nexus account</p>
+
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}">Error</div>
+
+                    <form th:action="@{/login}" th:object="${loginRequest}" method="post" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label" for="username">Username</label>
+                            <input id="username" class="form-control" th:field="*{username}" autocomplete="username" required>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="password">Password</label>
+                            <input id="password" type="password" class="form-control" th:field="*{password}" autocomplete="current-password" required>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+
+                    <p class="mt-3 mb-0 text-center text-secondary">
+                        No account?
+                        <a th:href="@{/register}">Create one</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

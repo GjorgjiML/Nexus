@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<article th:fragment="card(post)" class="card post-card mb-3 shadow-sm" th:attr="data-post-id=${post.id}">
+    <div class="card-body">
+        <div class="d-flex align-items-start gap-3">
+            <a th:href="@{/profile/{u}(u=${post.authorUsername})}" class="text-decoration-none">
+                <div th:replace="~{fragments/layout :: avatar(${post.authorAvatarPath}, ${post.authorUsername}, 'avatar-md')}"></div>
+            </a>
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                        <a class="fw-semibold text-decoration-none"
+                           th:href="@{/profile/{u}(u=${post.authorUsername})}"
+                           th:text="${post.authorUsername}">username</a>
+                        <div class="text-secondary small"
+                             th:text="${#temporals.format(post.createdAt.atZone(T(java.time.ZoneId).systemDefault()), 'MMM d, yyyy · HH:mm')}">
+                            date
+                        </div>
+                    </div>
+                    <form th:if="${post.ownedByCurrentUser}"
+                          th:action="@{/post/{id}/delete(id=${post.id})}"
+                          method="post"
+                          onsubmit="return confirm('Delete this post?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete post">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <p class="mt-2 mb-2 post-content" th:text="${post.content}">content</p>
+
+                <img th:if="${post.imagePath != null}"
+                     th:src="${post.imagePath}"
+                     alt="Post image"
+                     class="img-fluid rounded post-image mb-2">
+
+                <div class="d-flex align-items-center gap-3 mt-2">
+                    <button type="button"
+                            class="btn btn-sm like-btn"
+                            th:classappend="${post.likedByCurrentUser} ? 'btn-danger' : 'btn-outline-secondary'"
+                            th:attr="data-post-id=${post.id}, data-liked=${post.likedByCurrentUser}"
+                            th:disabled="${!isAuthenticated}">
+                        <i class="bi" th:classappend="${post.likedByCurrentUser} ? 'bi-heart-fill' : 'bi-heart'"></i>
+                        <span class="like-count" th:text="${post.likeCount}">0</span>
+                    </button>
+                    <span class="text-secondary small">
+                        <i class="bi bi-chat"></i>
+                        <span class="comment-count" th:text="${post.commentCount}">0</span>
+                    </span>
+                    <a class="text-secondary small text-decoration-none"
+                       th:href="@{/post/{id}(id=${post.id})}">View</a>
+                </div>
+
+                <div class="comments mt-3" th:attr="data-post-id=${post.id}">
+                    <div class="comment-list">
+                        <div th:each="c : ${post.comments}" class="comment-item d-flex gap-2 mb-2" th:attr="data-comment-id=${c.id}">
+                            <div th:replace="~{fragments/layout :: avatar(${c.authorAvatarPath}, ${c.authorUsername}, 'avatar-sm')}"></div>
+                            <div class="flex-grow-1">
+                                <div class="bg-body-secondary rounded-3 px-3 py-2">
+                                    <a class="fw-semibold small text-decoration-none"
+                                       th:href="@{/profile/{u}(u=${c.authorUsername})}"
+                                       th:text="${c.authorUsername}">user</a>
+                                    <span class="small" th:text="${c.content}">comment</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 mt-1">
+                                    <span class="text-secondary" style="font-size: .75rem;"
+                                          th:text="${#temporals.format(c.createdAt.atZone(T(java.time.ZoneId).systemDefault()), 'MMM d, HH:mm')}">time</span>
+                                    <button th:if="${c.ownedByCurrentUser}"
+                                            type="button"
+                                            class="btn btn-link btn-sm text-danger p-0 delete-comment-btn"
+                                            th:attr="data-comment-id=${c.id}">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form th:if="${isAuthenticated}" class="comment-form mt-2" th:attr="data-post-id=${post.id}">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="content" class="form-control" placeholder="Write a comment..." maxlength="1000" required>
+                            <button class="btn btn-primary" type="submit">Reply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+</body>
+</html>

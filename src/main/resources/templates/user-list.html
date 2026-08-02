@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${listTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <a th:href="@{/profile/{u}(u=${profile.username})}" class="btn btn-link px-0 mb-3">
+                <i class="bi bi-arrow-left"></i>
+                Back to <span th:text="${profile.username}">user</span>
+            </a>
+            <div class="card panel-card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h4 mb-3">
+                        <span th:text="${listTitle}">Followers</span>
+                        <span class="text-secondary">·</span>
+                        <span th:text="${profile.username}">user</span>
+                    </h1>
+
+                    <div th:if="${#lists.isEmpty(users)}" class="empty-state">No users to show.</div>
+
+                    <div th:each="u : ${users}" class="user-row d-flex align-items-center gap-3 p-2 mb-1">
+                        <a th:href="@{/profile/{name}(name=${u.username})}" class="text-decoration-none">
+                            <div th:replace="~{fragments/layout :: avatar(${u.avatarPath}, ${u.username}, 'avatar-md')}"></div>
+                        </a>
+                        <div class="flex-grow-1">
+                            <a class="fw-semibold text-decoration-none"
+                               th:href="@{/profile/{name}(name=${u.username})}"
+                               th:text="${u.username}">username</a>
+                            <div class="text-secondary small text-truncate"
+                                 th:text="${u.bio != null ? u.bio : ''}">bio</div>
+                        </div>
+                        <div th:if="${isAuthenticated and !u.ownProfile}">
+                            <form th:if="${!u.followedByCurrentUser}"
+                                  th:action="@{/profile/{name}/follow(name=${u.username})}" method="post">
+                                <button type="submit" class="btn btn-sm btn-primary">Follow</button>
+                            </form>
+                            <form th:if="${u.followedByCurrentUser}"
+                                  th:action="@{/profile/{name}/unfollow(name=${u.username})}" method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Unfollow</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
