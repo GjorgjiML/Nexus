@@ -1,6 +1,6 @@
 # Nexus
 
-Nexus is a small social media platform built with a pure Java stack: **Spring Boot 3.3**, **Spring Security + JWT**, **Spring Data JPA**, **PostgreSQL**, **Flyway**, and **Thymeleaf + Bootstrap 5**.
+Nexus is a small social media platform built with a pure Java stack: **Java 21**, **Spring Boot 3.3**, **Spring Security + JWT**, **Spring Data JPA**, **PostgreSQL**, **Flyway**, and **Thymeleaf + Bootstrap 5**.
 
 ## Features
 
